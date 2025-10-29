@@ -4,9 +4,9 @@ import FeedbackList from './components/FeedbackList';
 import Dashboard from './components/Dashboard';
 import './styles/App.css';
 
-// Add this line at the top - Dynamic API URL
+// Dynamic API URL for different environments - UPDATED FOR RENDER
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-backend-app.railway.app' // You'll replace this after backend deployment
+  ? process.env.REACT_APP_API_URL || 'https://mokhothu-backend.onrender.com'
   : 'http://localhost:5000';
 
 function App() {
@@ -15,11 +15,16 @@ function App() {
 
   const fetchFeedbacks = async () => {
     try {
+      console.log('Fetching from:', `${API_BASE_URL}/api/feedback`);
       const response = await fetch(`${API_BASE_URL}/api/feedback`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       setFeedbacks(data);
     } catch (error) {
       console.error('Error fetching feedbacks:', error);
+      alert('Failed to load feedbacks. Please check if the backend is running.');
     }
   };
 
@@ -43,11 +48,11 @@ function App() {
         alert('Feedback submitted successfully!');
       } else {
         const error = await response.json();
-        alert(error.error);
+        alert(`Error: ${error.error}`);
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      alert('Failed to submit feedback');
+      alert('Failed to submit feedback. Please check your connection.');
     }
   };
 
@@ -63,11 +68,11 @@ function App() {
           alert('Feedback deleted successfully!');
         } else {
           const error = await response.json();
-          alert(error.error);
+          alert(`Error: ${error.error}`);
         }
       } catch (error) {
         console.error('Error deleting feedback:', error);
-        alert('Failed to delete feedback');
+        alert('Failed to delete feedback. Please check your connection.');
       }
     }
   };

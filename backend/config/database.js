@@ -5,7 +5,7 @@ require('dotenv').config();
 let dbPath;
 
 if (process.env.NODE_ENV === 'production') {
-  // For Railway, use a persistent path
+  // For Render, use /tmp directory which is writable
   dbPath = '/tmp/feedback.db';
 } else {
   // For local development
